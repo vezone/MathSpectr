@@ -43,7 +43,8 @@ namespace SpectrUI
             double h = (b - a) / number;
             for (double i = a; i < b; i += h, index++)
             {
-                array[index] = i;
+                if (index < number)
+                    array[index] = i;
             }
 
             return array;

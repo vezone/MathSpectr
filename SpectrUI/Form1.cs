@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define vx
+
+using System;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 
@@ -13,8 +15,11 @@ namespace SpectrUI
             public double[] aArray;
         }
         int x_num = 100;
-        //static double a0 = -3.2, b0 = 3.2;
-        static double a0 = 0, b0 = 3.0;
+#if vx
+        static double a0 = -3.2, b0 = 3.2;
+#else
+        static double a0 = 0.0, b0 = 3.0;
+#endif
         static double h;
         
         double[] spectrXEven;
@@ -275,12 +280,12 @@ namespace SpectrUI
         public void ChartInit()
         {
             defChartValueMinX = 0;
-            defChartValueMaxX = 1;
-            defChartValueIntervalX = 1;
+            defChartValueMaxX = 0.75;
+            defChartValueIntervalX = 0.25;
 
             defChartValueMinY = -1;
             defChartValueMaxY = 1;
-            defChartValueIntervalY = 1;
+            defChartValueIntervalY = 0.25;
 
             chart1.Visible = true;
 
@@ -290,35 +295,66 @@ namespace SpectrUI
             chart1.ChartAreas[0].AxisY.MajorGrid.Enabled = false;
 
 
-            chart1.ChartAreas[0].AxisX.Minimum = defChartValueMinX;
-            chart1.ChartAreas[0].AxisX.Maximum = defChartValueMaxX;
-            chart1.ChartAreas[0].AxisX.Interval = defChartValueIntervalX;
+            chart1.ChartAreas[0].AxisX.Minimum =
+#if vx
+                -4;
+#else
+                defChartValueMinX;
+#endif
+            chart1.ChartAreas[0].AxisX.Maximum =
+#if vx
+                4;
+#else
+                defChartValueMaxX;
+#endif
+            chart1.ChartAreas[0].AxisX.Interval =
+#if vx
+                1;
+#else
+                defChartValueIntervalX;
+#endif
 
-            chart1.ChartAreas[0].AxisY.Minimum = defChartValueMinY;
-            chart1.ChartAreas[0].AxisY.Maximum = defChartValueMaxY;
-            chart1.ChartAreas[0].AxisY.Interval = defChartValueIntervalY;
+            chart1.ChartAreas[0].AxisY.Minimum =
+#if vx
+                -6;
+#else
+                defChartValueMinY;
+#endif
+            chart1.ChartAreas[0].AxisY.Maximum =
+#if vx
+                0;
+#else
+                defChartValueMaxY;
+#endif
+            chart1.ChartAreas[0].AxisY.Interval =
+#if vx
+                1;
+#else
+                defChartValueIntervalY;
+#endif
 
+            chart1.Series.RemoveAt(0);
+            chart1.Series.Add(new Series("x"));
+            chart1.Series.Add(new Series("y"));
+            chart1.Series.Add(new Series("V(x)"));
+            chart1.Series.Add(new Series("Четная_функция"));
+            chart1.Series.Add(new Series("Нечетная_функция"));
 
-            chart1.Series.Add(new Series("Series2"));
-            chart1.Series.Add(new Series("Series3"));
-            chart1.Series.Add(new Series("Series4"));
-            chart1.Series.Add(new Series("Series5"));
-
-            chart1.Series["Series1"].ChartType = SeriesChartType.Line;
-            chart1.Series["Series2"].ChartType = SeriesChartType.Line;
-            chart1.Series["Series3"].ChartType = SeriesChartType.Line;
-            chart1.Series["Series4"].ChartType = SeriesChartType.Line;
-            chart1.Series["Series5"].ChartType = SeriesChartType.Line;
-            chart1.Series["Series1"].Color = System.Drawing.Color.Blue;
-            chart1.Series["Series2"].Color = System.Drawing.Color.Black;
-            chart1.Series["Series3"].Color = System.Drawing.Color.Black;
-            chart1.Series["Series4"].Color = System.Drawing.Color.Orange;
-            chart1.Series["Series5"].Color = System.Drawing.Color.Indigo;
-            chart1.Series["Series1"].ChartArea = "ChartArea0";
-            chart1.Series["Series2"].ChartArea = "ChartArea0";
-            chart1.Series["Series3"].ChartArea = "ChartArea0";
-            chart1.Series["Series4"].ChartArea = "ChartArea0";
-            chart1.Series["Series5"].ChartArea = "ChartArea0";
+            chart1.Series["x"].ChartType = SeriesChartType.Line;
+            chart1.Series["y"].ChartType = SeriesChartType.Line;
+            chart1.Series["V(x)"].ChartType = SeriesChartType.Line;
+            chart1.Series["Четная_функция"].ChartType = SeriesChartType.Line;
+            chart1.Series["Нечетная_функция"].ChartType = SeriesChartType.Line;
+            chart1.Series["x"].Color = System.Drawing.Color.Black;
+            chart1.Series["y"].Color = System.Drawing.Color.Black;
+            chart1.Series["V(x)"].Color = System.Drawing.Color.Blue;
+            chart1.Series["Четная_функция"].Color = System.Drawing.Color.Indigo;
+            chart1.Series["Нечетная_функция"].Color = System.Drawing.Color.Orange;
+            chart1.Series["x"].ChartArea = "ChartArea0";
+            chart1.Series["y"].ChartArea = "ChartArea0";
+            chart1.Series["V(x)"].ChartArea = "ChartArea0";
+            chart1.Series["Четная_функция"].ChartArea = "ChartArea0";
+            chart1.Series["Нечетная_функция"].ChartArea = "ChartArea0";
 
             //MAXIMUM
 
@@ -345,7 +381,7 @@ namespace SpectrUI
             double[] d6 = new double[x_num];
             h = (b0 - a0) / x_num;
 
-            double add = 15.0, add2 = -15.0;
+            double add = 35.0, add2 = -35.0;
             label1.Text = h.ToString();
 
             for (int i = 0;
@@ -361,16 +397,19 @@ namespace SpectrUI
             }
 
             //V(x)
-            //chart1.Series["Series1"].Points.DataBindXY(d1, d2);
+#if vx
+            chart1.Series["V(x)"].Points.DataBindXY(d1, d2);
+#else
             //result
-            chart1.Series["Series5"].Points.DataBindXY(spectrXEven, spectrYEven);
-            chart1.Series["Series4"].Points.DataBindXY(spectrXNotEven, spectrYNotEven);
+            chart1.Series["Четная_функция"].Points.DataBindXY(spectrXEven, spectrYEven);
+            chart1.Series["Нечетная_функция"].Points.DataBindXY(spectrXNotEven, spectrYNotEven);
+#endif
             //dV(x)
             //chart1.Series["Series4"].Points.DataBindXY(d1, d3);
             //x
-            chart1.Series["Series3"].Points.DataBindXY(d6, d4);
+            chart1.Series["x"].Points.DataBindXY(d6, d4);
             //y
-            chart1.Series["Series2"].Points.DataBindXY(d4, d5);
+            chart1.Series["y"].Points.DataBindXY(d4, d5);
         }
 
         public Form1()
