@@ -10,13 +10,13 @@ namespace SpectrUI
     {
         public delegate double DefaultFunction(double value);
 
-        public static double[] MakeArray(int length)
+        public static double[] MakeArray(int length, double value = 0)
         {
             double[] array = new double[length];
-            
+
             for (int i = 0; i < length; i++)
             {
-                array[i] = 0;
+                array[i] = value;
             }
 
             return array;
@@ -49,6 +49,29 @@ namespace SpectrUI
 
             return array;
         }
+
+        public static double[] MakeArray(
+            double[] first, double[] second)
+        {
+            double[] newArray = new double[first.Length + second.Length];
+
+            for (int i = 0; i < first.Length; i++)
+            {
+                newArray[i] = first[i];
+            }
+
+            for (int i = 0; i < second.Length; i++)
+            {
+                newArray[i + first.Length] = second[i];
+            }
+
+            return newArray;
+        }
+
+        public static double[] MakeArray(
+            double[] first, double[] second, double[] third)
+            => MakeArray(MakeArray(first, second), third);
+        
 
         public static double Max(double[] array)
         {
@@ -158,6 +181,16 @@ namespace SpectrUI
             for (int i = 0; i < length; i++)
             {
                 array[i] = oldArray[i];
+            }
+            return array;
+        }
+
+        public static double[] SplitArray(double[] oldArray, int from, int to)
+        {
+            double[] array = new double[System.Math.Abs(to-from)];
+            for (int i = from; i < to; i++)
+            {
+                array[(i-from)] = oldArray[i];
             }
             return array;
         }
